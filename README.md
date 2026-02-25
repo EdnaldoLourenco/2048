@@ -1,23 +1,50 @@
-# 2048
-Esse projeto utiliza conceitos do Docker, como criar dockerfile, criar uma imagem do docker, clonar o aplicativo para nossa imagem, em seguida, implantar o aplicativo docker em contêiner na nuvem AZURE, criando um jogo 2048.
+# 2048 com Docker
 
-Requisitos necessários:
-Docker instalado; caso ainda não possua o docker em sua máquina pode fazer a instalação a partir do link: https://docs.docker.com/engine/install/
+Este projeto empacota o jogo 2048 em uma imagem Docker usando build em múltiplas etapas.
+A imagem final usa Nginx para servir os arquivos estáticos do jogo.
 
-Para criar a imagem docker:
+## Pré-requisitos
 
-docker build -t nome:tag .
+- Docker instalado ([guia oficial](https://docs.docker.com/engine/install/)).
 
-Criando e Executando o container:
+## Como executar
 
-docker run -d -P nome:tag
+### 1) Build da imagem
 
-Para saber em qual porta do está sendo executada a aplicação:
+```bash
+docker build -t jogo-2048:latest .
+```
 
+### 2) Subir o container
+
+```bash
+docker run -d --name jogo-2048 -p 8080:80 jogo-2048:latest
+```
+
+### 3) Acessar no navegador
+
+Abra:
+
+```text
+http://localhost:8080
+```
+
+## Verificações úteis
+
+- Ver containers em execução:
+
+```bash
 docker ps
-![image](https://github.com/EdnaldoLourenco/2048/assets/142667824/c46f1561-316b-4a21-b479-78a80ca6a9f0)
+```
 
-Acesse a aplicação do seu navegador especificando a porta:
-localhost:32770
+- Ver estado do healthcheck:
 
-![image](https://github.com/EdnaldoLourenco/2048/assets/142667824/9188b2aa-27d8-4dd5-9899-ae0fb67a7848)
+```bash
+docker inspect --format='{{json .State.Health}}' jogo-2048
+```
+
+## Melhorias aplicadas neste projeto
+
+- Imagens base com versões explícitas para maior previsibilidade.
+- Download do código com `curl -fsSL` para falhar de forma mais segura.
+- Adição de `HEALTHCHECK` para monitorar disponibilidade da aplicação.
